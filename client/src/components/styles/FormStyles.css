@@ -1,0 +1,14 @@
+.centered-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Add vertical and horizontal alignment */
+    width: 80%; /* Adjust the width as needed */
+    margin: 0 auto;
+  }
+  
+  .form-group {
+    width: 80%;
+    margin-bottom: 20px;
+    margin-top: 50px; 
+  }
