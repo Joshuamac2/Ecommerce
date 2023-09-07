@@ -1,18 +1,25 @@
-import {Button, Container, Navbar, Modal} from 'react-bootstrap'
+import {Button, Navbar, Modal} from 'react-bootstrap'
 import { useState, useContext } from 'react';
 import { CartContext } from '../CartContext.js';
 import CartProduct from './CartProduct';
-
+import Message from './Message';
 
 function NavbarComponent() {
     const cart = useContext(CartContext);
 
-    const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    // Handles the Contact Us!
+    const [showModal1, setShowModal1] = useState(false);
+    const handleCloseModal1 = () => setShowModal1(false);
+    const handleShowModal1 = () => setShowModal1(true);
 
+    // Handles the cart checkout
+    const [showModal2, setShowModal2] = useState(false);
+    const handleCloseModal2 = () => setShowModal2(false);
+    const handleShowModal2 = () => setShowModal2(true);
+
+    // Forwarding user to Stripe
     const checkout = async () => {
-        await fetch('http://localhost:4000/checkout', {
+        await fetch('http://localhost:4000/api/checkout', {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
@@ -22,23 +29,33 @@ function NavbarComponent() {
             return response.json();
         }).then((response) => {
             if(response.url) {
-                window.location.assign(response.url); // Forwarding user to Stripe
+                window.location.assign(response.url); 
             }
         })
     }
 
+    // Calculates the total of your cart
     const productsCount = cart.items.reduce((sum, product) => sum + product.quantity, 0);
 
     return (
         <>
         <Navbar expand="sm">
-            <Navbar.Brand href="/">Ecommerce Store</Navbar.Brand>
+            <Navbar.Brand href="/">Home</Navbar.Brand>
             <Navbar.Toggle />
+            <Button onClick={handleShowModal1}>Contact Us</Button>
             <Navbar.Collapse className="justify-content-end">
-                <Button onClick={handleShow}>Cart ({productsCount}) Items</Button>
+                <Button onClick={handleShowModal2}>Cart ({productsCount}) Items</Button>
             </Navbar.Collapse>
         </Navbar>
-        <Modal show={show} onHide={handleClose}>
+        <Modal show={showModal1} onHide={handleCloseModal1}>
+            <Modal.Header closeButton>
+                <Modal.Title>Contact Us!</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <Message />
+            </Modal.Body>
+        </Modal>
+        <Modal show={showModal2} onHide={handleCloseModal2}>
             <Modal.Header closeButton>
                 <Modal.Title>Shopping Cart</Modal.Title>
             </Modal.Header>
@@ -62,7 +79,6 @@ function NavbarComponent() {
             </Modal.Body>
         </Modal>
         </>
-
     )
 }
 
