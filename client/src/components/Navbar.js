@@ -43,6 +43,7 @@ function NavbarComponent() {
             <Navbar.Brand href="/">Home</Navbar.Brand>
             <Navbar.Toggle />
             <Button onClick={handleShowModal1}>Contact Us</Button>
+            <Button href="/productmanager">Product Manager</Button>
             <Navbar.Collapse className="justify-content-end">
                 <Button onClick={handleShowModal2}>Cart ({productsCount}) Items</Button>
             </Navbar.Collapse>
