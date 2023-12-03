@@ -1,6 +1,6 @@
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import './styles/Message.css';
+import './Message.css';
 import React, {useState} from 'react';
 import axios from 'axios';
 
@@ -102,7 +102,6 @@ function Message() {
             </Form>
         </div>
     )
-
 }
 
 export default Message;

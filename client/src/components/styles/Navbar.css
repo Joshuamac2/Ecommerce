@@ -1,0 +1,24 @@
+.line {
+  width: 100%;
+  height: 1px; /* Adjust as needed */
+  background-color: black;
+  margin-bottom: 5px; /* Adjust as needed */
+}
+
+.basket-link {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.basket-count {
+  font-size: 1rem;
+  font-weight: bold;
+  position: absolute;
+  top: -10px; /* Adjust as needed to position the number above the icon */
+  left: 53%; /* Center the number above the icon */
+  transform: translateX(-50%); /* Center the number horizontally */
+  background-color: white;
+  border-radius: 100%;
+  padding: 1px;
+}

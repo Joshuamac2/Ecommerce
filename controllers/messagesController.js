@@ -1,7 +1,5 @@
 const Sib = require('sib-api-v3-sdk');
 const { TransactionalEmailsApi } = require('sib-api-v3-sdk');
-
-// Initialize the TransactionalEmailApi instance
 const tranEmailAPI = new TransactionalEmailsApi();
 const client = Sib.ApiClient.instance;
 const apiKey = client.authentications['api-key'];

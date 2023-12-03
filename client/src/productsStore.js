@@ -1,33 +1,32 @@
-const productsArray = [
-    {
-        id: process.env.REACT_APP_CHOCOLATE,
-        title: "Chocolate  Cookie",
-        price: 4.99,
-        pic: 'cookie1.png'
-    },
-    {
-        id: process.env.REACT_APP_DARK,
-        title: "Tripple Chocolate Cookie",
-        price: 9.99,
-        pic: 'cookie2.png'
-    },
-    {
-        id: process.env.REACT_APP_WHITE,
-        title: "White Chocolate Cookie",
-        price: 39.99,
-        pic: 'cookie3.png'
+export async function fetchProductDataFromAPI() {
+    try {
+        const response = await fetch(`http://localhost:4000/api/products`);
+        // const response = await fetch(`http://localhost:4000/api/products/${product_id}`);
+  
+        if (!response.ok) {
+            throw new Error(`API request failed with status: ${response.status}`);
+        }
+  
+        const productData = await response.json();
+        return productData;
+    } catch (error) {
+        console.error('Error fetching product data from API:', error);
+        return null; // Return null in case of an error
     }
-]
-
-function getProductData(id) {
-    let productData = productsArray.find(product => product.id === id)
-
-    if (productData === undefined) {
-        console.log("Product data does not exist for ID: " + id);
-        return undefined;
-    }
-
-    return productData; 
-}
-
-export { productsArray, getProductData };
+  }
+  
+  async function getProductData(product_id) {
+      const allProductData = await fetchProductDataFromAPI();
+  
+      let foundProduct = allProductData.find(product => product.product_id === product_id);
+  
+      if (foundProduct === undefined) {
+          console.log("Product data does not exist for ID: " + product_id);
+          return undefined;
+      }
+  
+      return foundProduct; 
+  }
+  
+  export { getProductData };
+  

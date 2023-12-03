@@ -15,12 +15,12 @@ const getProducts = async (req, res) => {
 };
 
 const createProduct = async (req, res) => {
-  const { title, description, price, image_url, available_quantity } = req.body;
+  const { title, description, price, image_url, available_quantity, api_key } = req.body;
 
   try {
     const result = await pool.query(
-      'INSERT INTO products (title, description, price, image_url, available_quantity) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [title, description, price, image_url, available_quantity]
+      'INSERT INTO products (title, description, price, image_url, available_quantity, api_key) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+      [title, description, price, image_url, available_quantity, api_key]
     );
     res.status(201).json(result.rows[0]);
   } catch (error) {
@@ -29,7 +29,39 @@ const createProduct = async (req, res) => {
   }
 };
 
+const editProduct = async (req, res) => {
+  const { product_id } = req.params; 
+  const { title, description, price, image_url, available_quantity, api_key } = req.body;
+
+  try {
+    const result = await pool.query(
+      'UPDATE products SET title = $1, description = $2, price = $3, image_url = $4, available_quantity = $5, api_key = $6 WHERE product_id = $7 RETURNING *',
+      [title, description, price, image_url, available_quantity, api_key, product_id]
+    );
+
+    res.status(200).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error executing query:', error);
+    res.status(500).json({ error: 'An error occurred while updating the product.' });
+  }
+};
+
+const deleteProduct = async (req, res) => {
+  const { product_id } = req.params;
+
+  try {
+    const result = await pool.query('DELETE FROM products WHERE product_id = $1 RETURNING *', [product_id]);
+
+    res.status(200).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error removing product:', error);
+    res.status(500).json({ error: 'An error occurred while removing the product.' });
+  }
+};
+
 module.exports = {
   getProducts,
   createProduct,
+  editProduct,
+  deleteProduct, 
 };

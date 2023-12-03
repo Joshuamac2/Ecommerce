@@ -1,15 +1,14 @@
 import React from 'react';
-import './stylesPages/ProductManager.css';
-import ProductCatalogue from "../components/ProductCatalogue";
-import ProductCreator from "../components/ProductCreator";
+import ProductCreator from "../components/productmanager/ProductCreator";
+import ProductCatalogue from "../components/productmanager/ProductCatalogue";
 
 function ProductManager() {
   return (
-    <div className="test-container">
-      <div className="left-content">
+    <div>
+      <div>
         <ProductCreator />
       </div>
-      <div className="right-content">
+      <div>
         <ProductCatalogue />
       </div>
     </div>

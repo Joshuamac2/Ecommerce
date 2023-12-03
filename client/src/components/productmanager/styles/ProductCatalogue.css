@@ -6,17 +6,20 @@
 }
 
 .product-list {
+    display: flex;
+    flex-wrap: wrap;
     list-style: none;
-    display: block;
     padding: 0;
     margin: 0;
+    min-width: 400px; /* Adjust this value as needed */
+    background: 'yellow';
 }
 
 .product-item {
     background-color: #FBFBFB;
     padding: 0px;
-    margin: 20px 0;
-    width: 400px;
+    margin: 20px 10px; /* Add margin to separate the items */
+    width: 100px;
 }
 
 .product-item h3 {
@@ -31,8 +34,6 @@
     font-family: 'OpenSans', sans-serif; 
     padding: 10px;
     margin: 0px 10px 0px 10px; 
-
-
 }
 
 .product-price {
@@ -41,11 +42,9 @@
     margin: 0px 10px 0px 10px; 
 }
 
-
-
 .product-image {
-    max-width: 100%;
-    height: auto;
+    max-width: 100%; /* Set maximum width to allow responsiveness */
+    height: auto; /* Maintain aspect ratio */
     margin: 0px 0px 0px 0px; 
 }
 

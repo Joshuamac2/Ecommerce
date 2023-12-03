@@ -1,6 +1,5 @@
 import { createContext, useState } from "react";
-import { getProductData } from "./productsStore";
-
+import { fetchProductDataFromAPI } from "./productsStore";
 
 export const CartContext = createContext({
     items: [],
@@ -13,10 +12,12 @@ export const CartContext = createContext({
 
 export function CartProvider({children}) {
     const [cartProducts, setCartProducts] = useState([]);
+    console.log('Cart Products:', cartProducts);
+
     
 
-    function getProductQuantity(id) {
-        const quantity = cartProducts.find(product => product.id === id)?.quantity;
+    function getProductQuantity(product_id) {
+        const quantity = cartProducts.find(product => product.product_id === product_id)?.quantity;
         
         if (quantity === undefined) {
             return 0;
@@ -25,43 +26,56 @@ export function CartProvider({children}) {
         return quantity;
     }
 
-    function addOneToCart(id) {
-        const quantity = getProductQuantity(id);
-        console.log("Adding item with ID:", id);
-
-        if (quantity === 0) { 
+    async function addOneToCart(product_id) {
+        const quantity = getProductQuantity(product_id);
+        console.log("Adding item with ID:", product_id);
+    
+        const productData = await fetchProductDataFromAPI(); // Fetch all product data
+    
+        if (quantity === 0 && productData) {
+            const selectedProduct = productData.find(product => product.product_id === product_id);
+    
+            if (!selectedProduct) {
+                console.log("Product data does not exist for ID:", product_id);
+                return;
+            }
+    
+            setCartProducts([
+                ...cartProducts,
+                {
+                    product_id: selectedProduct.product_id,
+                    title: selectedProduct.title,
+                    description: selectedProduct.description,
+                    price: selectedProduct.price,
+                    image_url: selectedProduct.image_url,
+                    available_quantity: selectedProduct.available_quantity,
+                    api_key: selectedProduct.api_key,
+                    quantity: 1,
+                },
+            ]);
+        } else if (productData) {
             setCartProducts(
-                [
-                    ...cartProducts,
-                    {
-                        id: id,
-                        quantity: 1
-                    }
-                ]
-            )
-        } else { 
-        
-            setCartProducts(
-                cartProducts.map(
-                    product =>
-                    product.id === id                                
-                    ? { ...product, quantity: product.quantity + 1 } 
-                    : product                                        
+                cartProducts.map((product) =>
+                    product.product_id === product_id
+                        ? { ...product, quantity: product.quantity + 1 }
+                        : product
                 )
-            )
+            );
         }
     }
+    
+    
 
-    function removeOneFromCart(id) {
-        const quantity = getProductQuantity(id);
+    function removeOneFromCart(product_id) {
+        const quantity = getProductQuantity(product_id);
 
         if(quantity === 1) {
-            deleteFromCart(id);
+            deleteFromCart(product_id);
         } else {
             setCartProducts(
                 cartProducts.map(
                     product =>
-                    product.id === id                                
+                    product.product_id === product_id                                
                     ? { ...product, quantity: product.quantity - 1 } 
                     : product                                        
                 )
@@ -69,24 +83,25 @@ export function CartProvider({children}) {
         }
     }
 
-    function deleteFromCart(id) {
+    function deleteFromCart(product_id) {
 
         setCartProducts(
             cartProducts =>
             cartProducts.filter(currentProduct => {
-                return currentProduct.id !== id;
+                return currentProduct.product_id !== product_id;
             })  
         )
     }
 
-    function getTotalCost() {
-        let totalCost = 0;
-        cartProducts.map((cartItem) => {
-            const productData = getProductData(cartItem.id);
-            totalCost += (productData.price * cartItem.quantity);
-        });
+    async function getTotalCost() {
+        const totalCost = cartProducts.reduce(async (accPromise, cartItem) => {
+            const acc = await accPromise;
+            return acc + cartItem.price * cartItem.quantity;
+        }, Promise.resolve(0));
+    
         return totalCost;
     }
+    
 
     const contextValue = {
         items: cartProducts,
@@ -94,8 +109,10 @@ export function CartProvider({children}) {
         addOneToCart,
         removeOneFromCart,
         deleteFromCart,
-        getTotalCost
+        getTotalCost,
     }
+
+    console.log('Context Value:', contextValue); 
 
     return (
         <CartContext.Provider value={contextValue}>
@@ -105,3 +122,4 @@ export function CartProvider({children}) {
 }
 
 export default CartProvider;
+
