@@ -6,6 +6,7 @@ const apiKey = client.authentications['api-key'];
 apiKey.apiKey = process.env.SENDINBLUE_API_KEY;
 
 async function sendMessage(req, res) {
+
   const { name, email, subject, message } = req.body;
 
   const sender = {
@@ -26,8 +27,6 @@ async function sendMessage(req, res) {
       subject: subject,
       textContent: message,
     });
-
-    console.log('Email sent:', response);
 
     res.status(200).json({ message: 'Message sent successfully' });
   } catch (error) {

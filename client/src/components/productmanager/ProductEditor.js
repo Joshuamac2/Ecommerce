@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { MDBCard, MDBCardBody, MDBCardImage, MDBCol } from 'mdb-react-ui-kit';
-import './styles/ProductEditor.css';
 
 function ProductEditor({ product, onSave }) {
   const [title, setTitle] = useState('');
@@ -55,8 +54,8 @@ function ProductEditor({ product, onSave }) {
   };
 
   return (
-    <MDBCol md="4" lg="4" className="mb-5 ml-1 mr-5" style={{ marginBottom: "10px" }}>
-      <MDBCard style={{ width: "25rem", height: "40rem", borderRadius: "15px", display: "flex", flexDirection: "column" }}>
+    <MDBCol md="3" lg="3" className="mb-5 ml-1 mr-5" style={{ marginBottom: "10px" }}>
+      <MDBCard style={{ borderRadius: "15px", display: "flex", flexDirection: "column" }}>
         <MDBCardImage
           src={product.image_url}
           fluid
@@ -67,7 +66,7 @@ function ProductEditor({ product, onSave }) {
             height: "12rem",
           }}
         />
-        <MDBCardBody style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+        <MDBCardBody style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", flex: 1 }}>
           <div style={{ flex: 1 }}>
           <div className="mb-3">
               <label htmlFor="image_url" className="form-label small-text">Image Url:</label>

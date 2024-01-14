@@ -12,9 +12,6 @@ export const CartContext = createContext({
 
 export function CartProvider({children}) {
     const [cartProducts, setCartProducts] = useState([]);
-    console.log('Cart Products:', cartProducts);
-
-    
 
     function getProductQuantity(product_id) {
         const quantity = cartProducts.find(product => product.product_id === product_id)?.quantity;
@@ -28,20 +25,19 @@ export function CartProvider({children}) {
 
     async function addOneToCart(product_id) {
         const quantity = getProductQuantity(product_id);
-        console.log("Adding item with ID:", product_id);
-    
-        const productData = await fetchProductDataFromAPI(); // Fetch all product data
+        const productData = await fetchProductDataFromAPI();
     
         if (quantity === 0 && productData) {
-            const selectedProduct = productData.find(product => product.product_id === product_id);
+            const selectedProduct = productData.find(
+                (product) => product.product_id === product_id
+            );
     
             if (!selectedProduct) {
-                console.log("Product data does not exist for ID:", product_id);
                 return;
             }
     
-            setCartProducts([
-                ...cartProducts,
+            setCartProducts((prevCartProducts) => [
+                ...prevCartProducts,
                 {
                     product_id: selectedProduct.product_id,
                     title: selectedProduct.title,
@@ -54,8 +50,8 @@ export function CartProvider({children}) {
                 },
             ]);
         } else if (productData) {
-            setCartProducts(
-                cartProducts.map((product) =>
+            setCartProducts((prevCartProducts) =>
+                prevCartProducts.map((product) =>
                     product.product_id === product_id
                         ? { ...product, quantity: product.quantity + 1 }
                         : product
@@ -63,7 +59,6 @@ export function CartProvider({children}) {
             );
         }
     }
-    
     
 
     function removeOneFromCart(product_id) {
@@ -84,7 +79,6 @@ export function CartProvider({children}) {
     }
 
     function deleteFromCart(product_id) {
-
         setCartProducts(
             cartProducts =>
             cartProducts.filter(currentProduct => {
@@ -102,7 +96,6 @@ export function CartProvider({children}) {
         return totalCost;
     }
     
-
     const contextValue = {
         items: cartProducts,
         getProductQuantity,
@@ -112,8 +105,6 @@ export function CartProvider({children}) {
         getTotalCost,
     }
 
-    console.log('Context Value:', contextValue); 
-
     return (
         <CartContext.Provider value={contextValue}>
             {children}
@@ -122,4 +113,3 @@ export function CartProvider({children}) {
 }
 
 export default CartProvider;
-

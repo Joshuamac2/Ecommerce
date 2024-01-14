@@ -1,10 +1,12 @@
-import { Button, Navbar, Nav, Modal } from 'react-bootstrap';
 import React, { useEffect, useState, useContext } from 'react';
+import { Button, Navbar, Nav, Modal } from 'react-bootstrap';
 import { CartContext } from '../CartContext.js';
 import Cart from './Cart';
 import Message from './message/Message';
-import './styles/Navbar.css';
 import { PiShoppingCartSimpleBold } from "react-icons/pi";
+import { MdOutlineAdminPanelSettings } from "react-icons/md";
+
+import './styles/Navbar.css';
 
 function NavbarComponent() {
   const cart = useContext(CartContext);
@@ -20,44 +22,40 @@ function NavbarComponent() {
   const [totalCost, setTotalCost] = useState(null);
 
   const checkout = async () => {
-    await fetch('http://localhost:4000/api/checkout', {
+    const response = await fetch('http://localhost:4000/api/checkout', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ items: cart.items }),
-    })
-      .then((response) => response.json())
-      .then((response) => {
-        if (response.url) {
-          window.location.assign(response.url);
-        }
-      });
-  }
+    });
+
+    const data = await response.json();
+
+    if (data.url) {
+      window.location.assign(data.url);
+    }
+  };
 
   const productsCount = cart.items.reduce((sum, product) => sum + product.quantity, 0);
 
   useEffect(() => {
-    const calculateTotalCost = () => {
-      cart.getTotalCost().then(cost => {
-        setTotalCost(cost);
-      });
+    const calculateTotalCost = async () => {
+      const cost = await cart.getTotalCost();
+      setTotalCost(cost);
     };
 
     calculateTotalCost();
   }, [cart, cart.items, cart.getTotalCost]);
 
-  console.log('Products in Cart:', cart.items);
-  console.log('Products Count:', productsCount);
-
   return (
-      <div>
+    <div>
       <h1 style={{ fontSize: '2rem', marginBottom: '5px', textAlign: 'center' }}>Company Name.</h1>
       <Navbar expand="sm" className="mb-0">
         <Nav style={{ fontSize: '1.2rem' }} className="mx-auto nav-container">
           <Nav.Link href="/">Home</Nav.Link>
-          <Nav.Link href="/productmanager">Product Manager</Nav.Link>
           <Nav.Link onClick={handleShowModal1}>Contact Us</Nav.Link>    
+          <Nav.Link href="/adminlogin"><MdOutlineAdminPanelSettings size={30}/></Nav.Link>    
         </Nav>
         <Nav.Link onClick={handleShowModal2} className="basket-link">
           <PiShoppingCartSimpleBold size={30} />

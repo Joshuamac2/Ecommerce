@@ -19,10 +19,18 @@ app.use(
 const productsRoutes = require('./routes/productsRoutes');
 const checkoutRoutes = require('./routes/checkoutRoutes');
 const messageRoutes = require('./routes/messageRoutes');
+const registerUserRoutes = require('./routes/registerUserRoutes');
+const adminUserRoutes = require('./routes/adminUserRoutes');
+const jwtAuthRoutes = require("./routes/jwtAuthRoutes")
+const adminDashboard = require("./routes/dashboardRoutes")
 
 app.use('/api', productsRoutes);
+app.use('/api', registerUserRoutes);
+app.use('/api', adminUserRoutes);
 app.use('/api/checkout', checkoutRoutes);
 app.use('/api/send-message', messageRoutes);
+app.use("/api/auth", jwtAuthRoutes);
+app.use("/api/admindashboard", adminDashboard);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

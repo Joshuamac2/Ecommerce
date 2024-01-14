@@ -6,22 +6,16 @@ function Cart(props) {
   const cart = useContext(CartContext);
   const { productData } = props;
 
-  console.log('Product Data:', productData);
-
   if (!productData) {
     return <p>Loading product data...</p>;
   }
-
-    console.log('Quantity:', productData.quantity);
-    const price = parseFloat(productData.price);
-
-    console.log('Price:', price);
+  
+  const price = parseFloat(productData.price);    
+  const totalPrice = (productData.quantity * price).toFixed(2);
     
-    const totalPrice = (productData.quantity * price).toFixed(2);
-    
-    if (isNaN(totalPrice)) {
-      console.error('Total price is NaN. Quantity or price might be undefined or NaN.');
-    }
+  if (isNaN(totalPrice)) {
+    console.error('Total price is NaN. Quantity or price might be undefined or NaN.');
+  }
 
   return (
     <>

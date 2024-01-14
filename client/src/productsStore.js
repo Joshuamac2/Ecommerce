@@ -1,21 +1,23 @@
 export async function fetchProductDataFromAPI() {
     try {
+
         const response = await fetch(`http://localhost:4000/api/products`);
-        // const response = await fetch(`http://localhost:4000/api/products/${product_id}`);
   
         if (!response.ok) {
             throw new Error(`API request failed with status: ${response.status}`);
         }
   
         const productData = await response.json();
+
         return productData;
     } catch (error) {
         console.error('Error fetching product data from API:', error);
-        return null; // Return null in case of an error
+        return null; 
     }
   }
   
   async function getProductData(product_id) {
+    
       const allProductData = await fetchProductDataFromAPI();
   
       let foundProduct = allProductData.find(product => product.product_id === product_id);
