@@ -2,7 +2,6 @@ const router = require('express').Router();
 const pool = require('../database/dbConfig');
 const { getAdminUserDataById, removeAdminUserFromUsers } = require('../controllers/adminUserController');
 
-
 router.get('/getAdminUserData', async (req, res) => {
 
   try {
@@ -13,6 +12,23 @@ router.get('/getAdminUserData', async (req, res) => {
   } catch (error) {
     console.error('Error fetching user data:', error.message);
     res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+router.post('/checkAdminEmailExistence', async (req, res) => {
+  const { email } = req.body;
+
+  try {
+      const userData = await pool.query('SELECT * FROM users WHERE admin_email = $1', [email]);
+
+      if (userData.rows.length > 0) {
+          return res.json({ exists: true });
+      } else {
+          return res.json({ exists: false });
+      }
+  } catch (error) {
+      console.error('Error checking email existence:', error.message);
+      return res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 

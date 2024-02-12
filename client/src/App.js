@@ -16,9 +16,20 @@ import AdminLogin from './pages/adminPages/AdminLogin';
 import AdminRegister from './pages/adminPages/AdminRegister';
 import AdminRegisterConfirmation from './pages/adminPages/AdminRegisterConfirmation'
 import UserManager from './pages/adminPages/UserManager';
+import ForgottenPassword from './pages/adminPages/passwordRecovery/ForgottenPassword'
+import OTPInput from './pages/adminPages/passwordRecovery/OTPInput';
+import Reset from './pages/adminPages/passwordRecovery/Reset';
+
+import { createContext } from "react";
+export const RecoveryContext = createContext();
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const [page, setPage] = useState("login");
+  const [email, setEmail] = useState("");
+  const [otp, setOTP] = useState("");
+
 
   const setAuth = (boolean) => {
     setIsAuthenticated(boolean);
@@ -60,6 +71,8 @@ function App() {
 
   return (
     <CartProvider>
+      <RecoveryContext.Provider
+      value={{ page, setPage, otp, setOTP, setEmail, email }}>
       <Container>
         <NavbarComponent />
         <ToastContainer />
@@ -77,6 +90,18 @@ function App() {
             <Route
               path="/adminlogin"
               element={!isAuthenticated ? <AdminLogin setAuth={setAuth} /> : <Navigate to="/admindashboard" />}
+            />
+            <Route
+              path="/forgottenpassword"
+              element={<ForgottenPassword/>}
+            />
+            <Route
+              path="/otp"
+              element={<OTPInput/>}
+            />
+            <Route
+              path="/reset-password"
+              element={<Reset/>}
             />
             <Route
               path="/adminregister"
@@ -100,6 +125,7 @@ function App() {
           </Routes>
         </BrowserRouter>
       </Container>
+      </RecoveryContext.Provider>
     </CartProvider>
   );
 }

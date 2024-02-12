@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from "react-toastify";
+
+import AdminImage from "./AdminImage.js";
 
 function AdminRegister() {
   const [inputs, setInputs] = useState({
@@ -17,39 +19,46 @@ function AdminRegister() {
 
   const onSubmitForm = async (e) => {
     e.preventDefault();
-
+  
     try {
       const body = { reg_username, reg_email, reg_password };
-
+  
       const response = await fetch("http://localhost:4000/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-
+  
       if (response.ok) {
         const parseRes = await response.json();
-        toast.success("Admin approval pending", {style:{whiteSpace: 'nowrap'}})
+        toast.success("Admin approval pending", { style: { whiteSpace: 'nowrap' } });
         console.log(parseRes);
       } else {
-        toast.error("Error", {style:{whiteSpace: 'nowrap'}})
+        toast.error("Error", { style: { whiteSpace: 'nowrap' } });
         throw new Error(`Registration failed: ${response.statusText}`);
       }
     } catch (err) {
       console.error(err.message);
     }
   };
-
+  
   const navigate = useNavigate();
 
-  const handleRedirect = () => {
-    navigate('/adminregistrationconfirmation');
+  const handleRedirect = async (e) => {
+    e.preventDefault();
+    if (reg_username && reg_email && reg_password) {
+      await onSubmitForm(e); 
+      navigate('/adminregistrationconfirmation');
+    } else {
+      toast.error("Please fill in all fields", { style: { whiteSpace: 'nowrap' } });
+    }
   };
 
   return (
-    <div>
-      <h1 className="text-center my-5">Register</h1>
-      <form onSubmit={onSubmitForm}>
+    <div style={containerStyle}>
+      <AdminImage />
+      <form onSubmit={onSubmitForm} style={formStyle}>
+        <h3 className="text-left my-5">Register as an Admin user</h3>
         <input
           type="text"
           name="reg_username"
@@ -74,12 +83,38 @@ function AdminRegister() {
           value={reg_password}
           onChange={(e) => onChange(e)}
         />
-        <button type="submit" className="btn-block" onClick={handleRedirect}>
-          Submit
-        </button>
+        <button onClick={handleRedirect} style={buttonStyle}>Register</button>
+        <div className="forgot-register-links">
+          <Link to="/adminlogin">Login</Link>
+        </div>
       </form>
     </div>
   );
 }
+
+const containerStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+};
+
+const formStyle = {
+  marginLeft: '10px',
+  marginRight: '200px',
+  textAlign: 'center',
+  minWidth: '300px', 
+};
+
+const buttonStyle = {
+  backgroundColor: '#8B57F9',
+  color: 'white',
+  border: 'none',
+  borderRadius: '30px',
+  padding: '5px 20px',
+  cursor: 'pointer',
+  transition: 'background-color 0.3s',
+};
 
 export default AdminRegister;
