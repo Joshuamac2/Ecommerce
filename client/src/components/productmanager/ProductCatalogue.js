@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ProductCardManager from './ProductCardManager';
 import ProductEditor from './ProductEditor';
-import './styles/ProductCatalogue.css';
 
 const ProductCatalogue = () => {
   const [products, setProducts] = useState([]);
@@ -35,11 +34,11 @@ const ProductCatalogue = () => {
   };
 
   return (
-    <div className="product-container">
-      <h1 className="product-header">View and edit my products</h1>
-      <div className="product-list">
+    <div>
+      <h1 style={{ marginLeft: '120px' }}>View and edit my products</h1>
+      <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
         {products.map((product) => (
-          <React.Fragment key={product.product_id}>
+          <div key={product.product_id} style={{ width: '45%' }}>
             {editingProductId === product.product_id ? (
               <ProductEditor
                 product={product}
@@ -50,10 +49,11 @@ const ProductCatalogue = () => {
                 key={product.product_id}
                 product={product}
                 onEdit={handleEdit}
-                onDelete={handleDelete} 
+                onDelete={handleDelete}
+                pricingOptions={product.pricingOptions} 
               />
             )}
-          </React.Fragment>
+          </div>
         ))}
       </div>
     </div>

@@ -1,99 +1,209 @@
-import React, { useState } from 'react';
-import ProductEditor from './ProductEditor';
-import {
-  MDBCol,
-  MDBCard,
-  MDBCardBody,
-  MDBCardImage,
-} from "mdb-react-ui-kit";
+import React, { useState } from "react";
+import ProductEditor from "./ProductEditor";
+import { Carousel } from "react-responsive-carousel";
+import { IoMdArrowDropdown } from "react-icons/io";
 
-const ProductCardManager = ({ product, onEdit, onDelete }) => {
+const ProductCardManager = ({ product, onEdit, pricingOptions }) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded);
+  };
 
   const handleEdit = () => {
     setIsEditing(true);
     onEdit(product.product_id);
   };
 
-  const handleDelete = async () => {
-    const confirmDeletion = window.confirm('Are you sure you want to delete this product?');
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
 
-    if (confirmDeletion) {
-      try {
+  let imageUrls = [];
 
-        const response = await fetch(`http://localhost:4000/api/products/${product.product_id}`, {
-          method: 'DELETE',
-        });
+  if (product.image_url && typeof product.image_url === "string") {
+    try {
+      imageUrls = JSON.parse(product.image_url);
 
-        if (response.ok) {
-          onDelete(product.product_id); 
-          console.log('Product deleted successfully');
-        } else {
-          console.error('Failed to delete product');
-        }
-      } catch (error) {
-        console.error('Error deleting product:', error);
+      if (!Array.isArray(imageUrls)) {
+        imageUrls = [];
       }
+    } catch (error) {
+      console.error("Error parsing image URLs:", error);
+      imageUrls = [];
     }
+  }
+
+  const editButton = {
+    backgroundColor: "#333B51",
+    color: "white",
+    borderRadius: "10px",
+    border: "2px solid #333B51",
+    fontWeight: "bold",
+    cursor: "pointer",
+    marginTop: "15px",
+    marginBottom: "15px",
+  };
+
+  const productCardStyle = {
+    margin: "10px",
+    height: "100%",
+    overflow: "hidden",
+  };
+
+  const imgStylestyle = {
+    width: "70%",
+    height: "400px",
+  };
+
+  const productAttribute = {
+    textAlign: "left",
+    fontWeight: "bold",
+    marginTop: "5px",
+    backgroundColor: "white",
+    color: "#333B51",
+    borderRadius: "10px",
+    border: "5px solid #333B51",
+    boxShadow: "10px 10px 10px rgba(0, 0, 0, 0.1)",
+    padding: "5px",
+    cursor: "pointer",
+  };
+
+  const addToCart = {
+    backgroundColor: "#333B51",
+    color: "white",
+    padding: "5px 20px",
+    borderRadius: "10px",
+    border: "2px solid #333B51",
+    boxShadow: "10px 10px 10px rgba(0, 0, 0, 0.1)",
+    fontWeight: "bold",
+    cursor: "pointer",
+    marginTop: "15px",
   };
 
   return (
-    <MDBCol md="4" lg="4" className="mb-5 ml-1 mr-5" style={{ marginBottom: "10px" }}>
+    <div style={{ padding: "50px", ...productCardStyle, fontWeight: "bold" }}>
       {isEditing ? (
         <ProductEditor product={product} onSave={() => setIsEditing(false)} />
       ) : (
-        <MDBCard style={{ width: "25rem", height: "40rem", borderRadius: "15px", display: "flex", flexDirection: "column" }}>
-          <MDBCardImage
-            src={product.image_url}
-            fluid
-            className="w-100"
-            style={{
-              borderTopLeftRadius: "15px",
-              borderTopRightRadius: "15px",
-              height: "20rem",
-            }}
-          />
-          <MDBCardBody style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-            <div style={{ flex: 1 }}>
-              <p>
-                <p className="text-dark">
-                  {product.title}
-                </p>
-              </p>
-              <p className="small text-muted">{product.description}</p>
-            </div>
-            <div className="d-flex justify-content-between">
-              <p>
-                <p className="text-dark">
-                  Price: £{product.price}
-                </p>
-              </p>
-              <p className="text-dark">Available products: ({product.available_quantity})</p>
-            </div>
-            <hr className="my-0" />
-            <div className="d-flex justify-content-between" style={{ marginTop: "10px" }}>
-              <button
-                type="button"
-                className="btn btn-light"
-                style={{ fontSize: '0.7rem', padding: '0.2rem 0.5rem' }}
-                data-mdb-ripple-color="dark"
-                onClick={handleDelete} 
+        <div>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <button type="button" onClick={handleEdit} style={editButton}>
+              Edit
+            </button>
+          </div>
+          <div />
+          <Carousel showThumbs={false} autoPlay infiniteLoop>
+            {Array.isArray(imageUrls) ? (
+              imageUrls.map((urls, index) => (
+                <div key={index}>
+                  {Array.isArray(urls) ? (
+                    urls.map((url, idx) => (
+                      <img
+                        key={idx}
+                        src={url}
+                        style={imgStylestyle}
+                        alt={`Product Image ${index + 1}`}
+                      />
+                    ))
+                  ) : (
+                    <img
+                      src={urls}
+                      style={imgStylestyle}
+                      alt={`Product Image ${index + 1}`}
+                    />
+                  )}
+                </div>
+              ))
+            ) : (
+              <div>
+                <img
+                  src={imageUrls}
+                  style={imgStylestyle}
+                  alt="Product Image"
+                />
+              </div>
+            )}
+          </Carousel>
+          <div>
+            <div>
+              <h4 style={{ fontWeight: "bold", marginTop: "10px" }}>
+                {product.title}
+              </h4>
+              <p
+                style={{
+                  fontWeight: "bold",
+                  marginTop: "10px",
+                  color: "darkgray",
+                  height: "100px",
+                  overflow: "hidden",
+                  wordWrap: "break-word",
+                  flexGrow: 1,
+                }}
               >
-                🗑️ Remove
-              </button>
-              <button
-                onClick={handleEdit}
-                className="btn btn-dark"
-                style={{ fontSize: '0.7rem', padding: '0.2rem 0.5rem' }}
-                data-mdb-ripple-init
-              >
-                ✎ Edit
-              </button>
+                {product.description}
+              </p>
+              <hr />
             </div>
-          </MDBCardBody>
-        </MDBCard>
+            <div style={{ fontWeight: "bold" }}>
+              <p>
+                Product Attribute:
+                {pricingOptions && pricingOptions.length > 0 && (
+                  <div className="dropdown">
+                    <button
+                      onClick={toggleDropdown}
+                      className="dropdown-toggle"
+                      style={productAttribute}
+                    >
+                      {isOpen ? "Hide Pricing Options" : "Show Pricing Options"}
+                    </button>
+                    <div
+                      className={
+                        isOpen ? "dropdown-menu show" : "dropdown-menu"
+                      }
+                      style={productAttribute}
+                    >
+                      {pricingOptions.map((option, index) => (
+                        <p key={index} className="text-dark">
+                          {option.name}: ${option.price}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </p>
+              <button style={addToCart}> Add to cart</button>
+            </div>
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  fontWeight: "bold",
+                  fontSize: "20px",
+                  marginTop: "20px",
+                  color: "black",
+                  overflow: "hidden",
+                  wordWrap: "break-word",
+                  flexGrow: 1,
+                }}
+                onClick={toggleExpand}
+              >
+                <span>Product Details</span>
+                <IoMdArrowDropdown />
+              </div>
+              <div
+                style={{ borderBottom: "1px solid gray", marginTop: "5px" }}
+              ></div>
+              {isExpanded && <div>{product.product_details}</div>}
+            </div>
+          </div>
+        </div>
       )}
-    </MDBCol>
+    </div>
   );
 };
 
